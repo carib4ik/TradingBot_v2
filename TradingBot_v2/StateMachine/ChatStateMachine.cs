@@ -1,22 +1,19 @@
 using System.Collections.Concurrent;
 using Telegram.Bot;
-using TradingBot.Services;
-using TradingBot.StateMachine.States;
+using TradingBot_v2.Services;
+using TradingBot_v2.StateMachine.States;
 
-namespace TradingBot.StateMachine;
+namespace TradingBot_v2.StateMachine;
 
 public class ChatStateMachine
 {
     private readonly ConcurrentDictionary<long, ChatStateBase> _chatStates = new();
     private readonly Dictionary<Type, Func<ChatStateBase>> _states = new();
     
-    public ChatStateMachine(ITelegramBotClient botClient, UsersDataProvider usersDataProvider, ChatGptService chatGptService, MarketDataService marketDataState)
+    public ChatStateMachine(ITelegramBotClient botClient, UsersDataProvider usersDataProvider, MarketDataService marketDataState)
     {
         _states[typeof(IdleState)] = () => new IdleState(this);
         _states[typeof(StartState)] = () => new StartState(this, botClient);
-        _states[typeof(AskState)] = () => new AskState(this, botClient, chatGptService);
-        _states[typeof(MarketDataState)] = () => new MarketDataState(this, botClient);
-        _states[typeof(GetTradeState)] = () => new GetTradeState(this, botClient, marketDataState, chatGptService);
         _states[typeof(TrackPositionsState)] = () => new TrackPositionsState(this, botClient, marketDataState);
         _states[typeof(RsiState)] = () => new RsiState(this, botClient, marketDataState);
     }

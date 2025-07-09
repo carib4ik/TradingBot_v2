@@ -1,6 +1,6 @@
 using Telegram.Bot.Types;
 
-namespace TradingBot.StateMachine.States;
+namespace TradingBot_v2.StateMachine.States;
 
 public abstract class ChatStateBase
 {

@@ -1,16 +1,16 @@
 using Microsoft.Extensions.Hosting;
 using Telegram.Bot;
-using TradingBot.Data;
+using TradingBot_v2.Data;
 
-namespace TradingBot.Services;
+namespace TradingBot_v2.Services;
 
 public class RsiCheckerService : BackgroundService
 {
     private readonly ITelegramBotClient _botClient;
     private readonly MarketDataService _marketDataService;
     private readonly TimeSpan _checkingInterval = TimeSpan.FromMinutes(30);
-    private readonly UsersDataProvider _usersDataProvider;
     private readonly List<TokenData> _tokens;
+    private readonly UsersDataProvider _usersDataProvider;
     private const string CHART_INTERVAL = "1h";
     private const double MAX_RSI_ALERT = 70;
     private const double MIN_RSI_ALERT = 30;
@@ -65,18 +65,7 @@ public class RsiCheckerService : BackgroundService
     {
         return
         [
-            new TokenData { Symbol = GlobalData.BTC },
-            new TokenData { Symbol = GlobalData.ETH },
-            new TokenData { Symbol = GlobalData.SOL },
-            new TokenData { Symbol = GlobalData.ADA },
-            new TokenData { Symbol = GlobalData.AVAX },
-            new TokenData { Symbol = GlobalData.LTC },
-            new TokenData { Symbol = GlobalData.TON },
-            new TokenData { Symbol = GlobalData.SUI },
-            new TokenData { Symbol = GlobalData.XRP },
-            new TokenData { Symbol = GlobalData.NEAR },
-            new TokenData { Symbol = GlobalData.AAVE },
-            new TokenData { Symbol = GlobalData.LINK },
+            new TokenData { Symbol = GlobalData.BTC }
         ];
     }
 }

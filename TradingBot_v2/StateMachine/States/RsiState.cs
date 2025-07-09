@@ -1,9 +1,9 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using TradingBot.Services;
+using TradingBot_v2.Services;
 
-namespace TradingBot.StateMachine.States;
+namespace TradingBot_v2.StateMachine.States;
 
 public class RsiState : ChatStateBase
 {

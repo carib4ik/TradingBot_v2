@@ -2,10 +2,8 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using TradingBot.Data;
-using TradingBot.Extensions;
 
-namespace TradingBot.StateMachine.States;
+namespace TradingBot_v2.StateMachine.States;
 
 public class StartState : ChatStateBase
 {

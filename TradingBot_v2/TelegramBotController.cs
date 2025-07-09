@@ -3,10 +3,10 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using TradingBot.Data;
-using TradingBot.Services;
+using TradingBot_v2.Data;
+using TradingBot_v2.Services;
 
-namespace TradingBot;
+namespace TradingBot_v2;
 
 public class TelegramBotController
 {
