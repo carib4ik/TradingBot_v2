@@ -7,20 +7,20 @@ namespace TradingBot_v2.StateMachine.States;
 
 public class TrackPositionsState : ChatStateBase
 {
-    private readonly MarketDataService _marketDataService;
+    private readonly PositionsTrackerService _positions;
     private readonly ChatStateMachine _stateMachine;
     private readonly ITelegramBotClient _botClient;
     
-    public TrackPositionsState(ChatStateMachine stateMachine, ITelegramBotClient botClient, MarketDataService marketDataService) : base(stateMachine)
+    public TrackPositionsState(ChatStateMachine stateMachine, ITelegramBotClient botClient, PositionsTrackerService positions) : base(stateMachine)
     {
-        _marketDataService = marketDataService;
+        _positions = positions;
         _stateMachine = stateMachine;
         _botClient = botClient;
     }
 
     public override async Task OnEnter(long chatId)
     {
-        var json = await _marketDataService.GetOpenPositionsAsync();
+        var json = await _positions.GetOpenPositionsAsync();
 
         var positions = JArray.Parse(json);
         if (!positions.Any())

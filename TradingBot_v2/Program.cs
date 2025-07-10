@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Binance.Net.Clients;
+using CryptoExchange.Net.Authentication;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Telegram.Bot;
 using TradingBot_v2.Services;
@@ -21,9 +23,14 @@ public static class Program
                 // Регистрация зависимостей через фабрики или напрямую
                 services.AddSingleton<ITelegramBotClient>(_ => new TelegramBotClient(config.TelegramBotToken));
                 
+                services.AddSingleton<BinanceRestClient>(_ => new BinanceRestClient(options =>
+                {
+                    options.ApiCredentials = new ApiCredentials(config.BinanceKey, config.BinanceSecret);
+                }));
+                
                 services.AddSingleton<UsersDataProvider>();
-                services.AddSingleton<MarketDataService>(_ => new MarketDataService(config.BinanceKey, config.BinanceSecret));
-
+                services.AddSingleton<MarketDataService>();
+                services.AddSingleton<PositionsTrackerService>();
                 services.AddSingleton<ChatStateMachine>();
                 services.AddSingleton<ChatStateController>();
                 services.AddSingleton<TelegramBotController>();
@@ -44,13 +51,9 @@ public static class Program
     {
         return new AppConfig.AppConfig
         {
-            // TelegramBotToken = Environment.GetEnvironmentVariable("TELEGRAM_BOT_TOKEN"),
-            // BinanceKey = Environment.GetEnvironmentVariable("BYBIT_KEY"),
-            // BinanceSecret = Environment.GetEnvironmentVariable("BYBIT_SECRET"),
-            
-            TelegramBotToken = "7036012109:AAE8SVT8DTBBm2vrEchOaKsIpCWw6fxihyI",
-            BinanceKey = "vj2Akwxmi5a2frZs2A4LI56KYANOGCdFdoBn1oRro4yto0XdYvDlyuU8smjqAmCT",
-            BinanceSecret = "2PbH5Vwtqksufw7nM17MtOltaqcW5AVpoQ3TvxEY4bTIzdn84JXY94KcIjvm2svm",
+            TelegramBotToken = Environment.GetEnvironmentVariable("TELEGRAM_BOT_TOKEN"),
+            BinanceKey = Environment.GetEnvironmentVariable("BYBIT_KEY"),
+            BinanceSecret = Environment.GetEnvironmentVariable("BYBIT_SECRET"),
         };
     }
 }

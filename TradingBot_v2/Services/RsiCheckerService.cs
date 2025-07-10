@@ -12,7 +12,7 @@ public class RsiCheckerService : BackgroundService
     private readonly List<TokenData> _tokens;
     private readonly UsersDataProvider _usersDataProvider;
     private const string CHART_INTERVAL = "1h";
-    private const double MAX_RSI_ALERT = 30;
+    private const double MAX_RSI_ALERT = 70;
     private const double MIN_RSI_ALERT = 30;
 
     public RsiCheckerService(ITelegramBotClient botClient, MarketDataService marketDataService, UsersDataProvider usersDataProvider)

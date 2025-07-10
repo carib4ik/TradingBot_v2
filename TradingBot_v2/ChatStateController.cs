@@ -53,6 +53,10 @@ public class ChatStateController
                 await _stateMachine.TransitTo<RsiState>(chatId);
                 break;
             
+            case GlobalData.POSITIONS:
+                await _stateMachine.TransitTo<TrackPositionsState>(chatId);
+                break;
+            
             default:
                 var state = _stateMachine.GetState(chatId);
                 await state.HandleMessage(message);

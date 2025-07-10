@@ -10,11 +10,12 @@ public class ChatStateMachine
     private readonly ConcurrentDictionary<long, ChatStateBase> _chatStates = new();
     private readonly Dictionary<Type, Func<ChatStateBase>> _states = new();
     
-    public ChatStateMachine(ITelegramBotClient botClient, UsersDataProvider usersDataProvider, MarketDataService marketDataState)
+    public ChatStateMachine(ITelegramBotClient botClient, UsersDataProvider usersDataProvider, 
+        MarketDataService marketDataState, PositionsTrackerService positionsTrackerService)
     {
         _states[typeof(IdleState)] = () => new IdleState(this);
         _states[typeof(StartState)] = () => new StartState(this, botClient);
-        _states[typeof(TrackPositionsState)] = () => new TrackPositionsState(this, botClient, marketDataState);
+        _states[typeof(TrackPositionsState)] = () => new TrackPositionsState(this, botClient, positionsTrackerService);
         _states[typeof(RsiState)] = () => new RsiState(this, botClient, marketDataState);
     }
     
