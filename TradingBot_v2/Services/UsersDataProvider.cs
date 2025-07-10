@@ -7,7 +7,7 @@ namespace TradingBot_v2.Services;
 public class UsersDataProvider
 {
     private readonly ConcurrentDictionary<long, UserData> _usersData = new();
-    private const string FILE_PATH = "AppSettings/Users.json";
+    private const string FILE_PATH = "AppConfig/Users.json";
     
     public void SaveChatIdIfNotExists(long chatId)
     {
