@@ -2,6 +2,8 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TradingBot_v2.Data;
+using TradingBot_v2.Extensions;
 
 namespace TradingBot_v2.StateMachine.States;
 
@@ -35,12 +37,10 @@ public class StartState : ChatStateBase
     {
         const string greetings = "\ud83e\udd16 Crypto Insight Bot\nТвой помощник по аналитике рынка и экономики.\n\ud83d\udcca Задай вопрос — получи ответ от ИИ.\n\ud83d\udca1 Получай краткосрочные сделки по топовым криптомонетам.\n\ud83d\udcc8 Автооповещения о зонах перекупленности/перепроданности (RSI).";
         
-        var askButton = InlineKeyboardButton.WithCallbackData("Задать вопрос ИИ", GlobalData.ASK);
-        var marketDataButton = InlineKeyboardButton.WithCallbackData("Получить точку входа", GlobalData.MARKET_DATA);
         var positionsButton = InlineKeyboardButton.WithCallbackData("Посмотреть открытые позиции", GlobalData.POSITIONS);
         var rsiButton = InlineKeyboardButton.WithCallbackData("Текущий BTCUSDT RSI", GlobalData.RSI);
         
-        var keyboard = new InlineKeyboardMarkup([[askButton], [marketDataButton], [positionsButton], [rsiButton]]);
+        var keyboard = new InlineKeyboardMarkup([[positionsButton], [rsiButton]]);
         
         await _botClient.SendMessage(chatId, greetings.EscapeMarkdownV2(), replyMarkup: keyboard, parseMode: ParseMode.MarkdownV2);
         await StateMachine.TransitTo<IdleState>(chatId);

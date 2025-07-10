@@ -3,8 +3,6 @@ using Microsoft.Extensions.Hosting;
 using Telegram.Bot;
 using TradingBot_v2.Services;
 using TradingBot_v2.StateMachine;
-using TradingBot;
-using TradingBot.StateMachine;
 
 namespace TradingBot_v2;
 
@@ -46,9 +44,13 @@ public static class Program
     {
         return new AppConfig.AppConfig
         {
-            TelegramBotToken = Environment.GetEnvironmentVariable("TELEGRAM_BOT_TOKEN"),
-            BinanceKey = Environment.GetEnvironmentVariable("BYBIT_KEY"),
-            BinanceSecret = Environment.GetEnvironmentVariable("BYBIT_SECRET"),
+            // TelegramBotToken = Environment.GetEnvironmentVariable("TELEGRAM_BOT_TOKEN"),
+            // BinanceKey = Environment.GetEnvironmentVariable("BYBIT_KEY"),
+            // BinanceSecret = Environment.GetEnvironmentVariable("BYBIT_SECRET"),
+            
+            TelegramBotToken = "7036012109:AAE8SVT8DTBBm2vrEchOaKsIpCWw6fxihyI",
+            BinanceKey = "vj2Akwxmi5a2frZs2A4LI56KYANOGCdFdoBn1oRro4yto0XdYvDlyuU8smjqAmCT",
+            BinanceSecret = "2PbH5Vwtqksufw7nM17MtOltaqcW5AVpoQ3TvxEY4bTIzdn84JXY94KcIjvm2svm",
         };
     }
 }

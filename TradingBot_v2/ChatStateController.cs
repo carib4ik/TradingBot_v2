@@ -3,7 +3,6 @@ using Telegram.Bot.Types.Enums;
 using TradingBot_v2.Data;
 using TradingBot_v2.StateMachine;
 using TradingBot_v2.StateMachine.States;
-using TradingBot.StateMachine;
 
 namespace TradingBot_v2;
 

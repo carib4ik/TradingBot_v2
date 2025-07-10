@@ -1,39 +1,67 @@
 using System.Globalization;
+using Binance.Net.Clients;
 using CryptoExchange.Net.Authentication;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Skender.Stock.Indicators;
+using TradingBot_v2.Extensions;
 
 namespace TradingBot_v2.Services;
 
 public class MarketDataService
 {
-    private readonly Binance _binanceClient;
-    private const int CANDLES_LIMIT = 800;
+    private readonly BinanceRestClient _binanceClient;
+    private const int CANDLES_LIMIT = 400;
 
     public MarketDataService(string apiKey, string apiSecret)
     {
-        _binanceClient = new Binance(options => { options.ApiCredentials = new ApiCredentials(apiKey, apiSecret); });
+        _binanceClient = new BinanceRestClient(options =>
+        {
+            options.ApiCredentials = new ApiCredentials(apiKey, apiSecret);
+        });
+
     }
 
     public async Task<string> GetDataFromBinance(string symbol, string interval)
     {
-        var url = $"https://api.binance.com/api/v3/klines?symbol={symbol}&interval={interval}&limit={CANDLES_LIMIT}";
-
         Console.WriteLine("Get Market Data");
+        
+        Console.WriteLine($"symbol = {symbol}, interval = {interval}, limit = {CANDLES_LIMIT}");
+        
+        var chart = await _binanceClient.SpotApi.ExchangeData.GetKlinesAsync(
+            symbol: symbol,
+            interval: interval.ToKlineInterval(),
+            limit: CANDLES_LIMIT
+        );
+        
+        Console.WriteLine($"chart.Success = {chart.Success}");
+        Console.WriteLine($"chart.Error = {chart.Error}");
+        Console.WriteLine($"chart.Data.Count() = {chart.Data?.Count()}");
 
-        using var client = new HttpClient();
-        var response = await client.GetAsync(url);
-        response.EnsureSuccessStatusCode();
-
-        Console.WriteLine("Market Data received successfully");
-
-        return await response.Content.ReadAsStringAsync();
+        
+        // Логирование и защита от null
+        if (!chart.Success || chart.Data == null || !chart.Data.Any())
+        {
+            Console.WriteLine("Ошибка при получении данных с binance: " + chart.Error);
+            throw new Exception("binance API не вернул данные.");
+        }
+        
+        var jsonChart = JsonConvert.SerializeObject(chart.Data.Select(c => new {
+            Time = c.OpenTime.ToString("s"),
+            Open = c.OpenPrice,
+            High = c.HighPrice,
+            Low = c.LowPrice,
+            Close = c.ClosePrice
+        }), Formatting.Indented);
+        
+        return jsonChart;
     }
     
     public async Task<double?> GetCurrentRsi(string symbol, string interval, int period = 14)
     {
-        var json = await GetDataFromByBit(symbol, interval);
+        Console.WriteLine("Get current Rsi");
+        
+        var json = await GetDataFromBinance(symbol, interval);
         var candles = JArray.Parse(json);
 
         var quotes = candles.Select(c => new Quote
@@ -52,23 +80,28 @@ public class MarketDataService
 
     public async Task<string> GetOpenPositionsAsync()
     {
-        var result = await _binanceClient.V5Api.Trading.GetPositionsAsync(category: Category.Linear, settleAsset: "USDT");
+        var result = await _binanceClient.UsdFuturesApi.Account.GetPositionInformationAsync();
 
         if (!result.Success || result.Data == null)
-            return "Ошибка при получении позиций с Bybit.";
+        {
+            Console.WriteLine("Ошибка при получении позиций с Binance: " + result.Error);
+            return "Ошибка при получении позиций с Binance.";
+        }
 
-        var positions = result.Data.List
-            .Where(p => p.PositionValue > 0) // Фильтруем только активные позиции
+        // Фильтруем только открытые позиции (с ненулевым объёмом)
+        var openPositions = result.Data
+            .Where(p => p.Quantity != 0)
             .Select(p => new
             {
                 p.Symbol,
-                Size = p.PositionValue,
-                EntryPrice = p.AveragePrice,
+                Size = p.Quantity,
+                EntryPrice = p.EntryPrice,
                 Pnl = p.UnrealizedPnl,
                 Leverage = p.Leverage,
-                Side = p.Side.ToString()
+                Side = p.Quantity > 0 ? "Long" : "Short"
             });
 
-        return JsonConvert.SerializeObject(positions, Formatting.Indented);
+        return JsonConvert.SerializeObject(openPositions, Formatting.Indented);
     }
+
 }
